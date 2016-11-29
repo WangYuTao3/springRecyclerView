@@ -134,7 +134,7 @@ public class RecyclerViewSpringAdapter extends RecyclerView.Adapter {
         if (mShowSpringHeader && position == 0) {
             return;
         }
-        mDelegate.onBindViewHolder(holder, position);
+        mDelegate.onBindViewHolder(holder, position - 1);
     }
 
     @Override
