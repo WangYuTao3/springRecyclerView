@@ -111,10 +111,9 @@ public class RecyclerViewSpringAdapter extends RecyclerView.Adapter {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_UP:
                         rollBackAnimation();
-                        return false;
+                        break;
                     case MotionEvent.ACTION_MOVE:
-                        moveAnimation(event);
-                        return false;
+                        return moveAnimation(event);
                 }
                 return false;
             }
@@ -158,9 +157,9 @@ public class RecyclerViewSpringAdapter extends RecyclerView.Adapter {
      *
      * @param event
      */
-    private void moveAnimation(MotionEvent event) {
+    private boolean moveAnimation(MotionEvent event) {
         if (!mShowSpringHeader) {
-            return;
+            return false;
         }
 
         if (mState != State.DRAGGING) {
@@ -168,13 +167,13 @@ public class RecyclerViewSpringAdapter extends RecyclerView.Adapter {
             if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
                 mLastY = event.getY();
             } else {
-                return;
+                return false;
             }
         }
         // 滚动距离乘以一个系数
         int distance = (int) ((event.getY() - mLastY) * SCROLL_RATIO);
         if (distance < 0) {
-            return;
+            return false;
         }
         //只要distance大于0，就认为在拖动
         mState = State.DRAGGING;
@@ -185,7 +184,7 @@ public class RecyclerViewSpringAdapter extends RecyclerView.Adapter {
         float scaleX = (distance + mSpringHeaderRect.width()) / mSpringHeaderRect.width();
         float scaleY = (distance + mSpringHeaderRect.height()) / mSpringHeaderRect.height();
         if (scaleY >= mMaxScaleValue) {
-            return;
+            return true;
         }
         // 增加header高度
         ViewGroup.LayoutParams lp = mVSpringHeader.getLayoutParams();
@@ -194,6 +193,7 @@ public class RecyclerViewSpringAdapter extends RecyclerView.Adapter {
         // 设置header缩放
         mVSpringHeader.setScaleX(scaleX);
         mVSpringHeader.setScaleY(scaleY);
+        return true;
     }
 
     /**
